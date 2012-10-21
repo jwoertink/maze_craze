@@ -1,0 +1,3 @@
+class Maze < SimpleApplication
+  
+end
