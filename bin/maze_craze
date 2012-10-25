@@ -1,0 +1,7 @@
+#!/usr/bin/ruby
+# -*- coding: utf-8 -*-
+GAME_CONFIG_DIR = File.join(File.dirname(__FILE__), '..', 'config')
+require File.join(GAME_CONFIG_DIR, 'boot')
+require File.join(GAME_CONFIG_DIR, 'game')
+
+Game.run

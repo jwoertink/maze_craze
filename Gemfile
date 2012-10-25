@@ -1,6 +1,6 @@
-source "http://rubygems.org"
+source :rubygems
 
-gem 'theseus', :git => "git://github.com/jwoertink/theseus.git"
+gem 'theseus', :github => "jwoertink/theseus"
 
 group :development do
   gem "rawr"
