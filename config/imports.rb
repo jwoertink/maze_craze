@@ -3,12 +3,10 @@
 require 'bundler'
 Bundler.require
 
-# GAME_ROOT_PATH = File.expand_path(File.dirname(__FILE__))
-# $CLASSPATH << File.join(GAME_ROOT_PATH, "java", "classes")
-# 
-# $: << File.join(GAME_ROOT_PATH)
+$CLASSPATH << File.join(GAME_ROOT_PATH, "java", "classes")
+$: << File.join(GAME_ROOT_PATH)
 
-#require File.join(GAME_ROOT_PATH, '..', '..', 'vendor', 'jme3_2012-12-20.jar')
+require 'vendor/jme3.jar'
 
 java_import "com.jme3.app.SimpleApplication"
 java_import "com.jme3.system.AppSettings"
@@ -55,7 +53,11 @@ java_import "java.util.logging.Logger"
 # java_import "java.awt.GraphicsDevice"
 # java_import "java.awt.GraphicsEnvironment"
 
-java_import "StartScreenController"
+# java_import "StartScreenController"
 # java_import "HudScreenController"
 # java_import "PauseScreenController"
 # java_import "EndScreenController"
+
+require 'models/wall'
+require 'models/player'
+require 'models/maze'

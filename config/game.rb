@@ -1,21 +1,17 @@
-require File.join(__FILE__, 'imports')
-
 Bundler.require if defined?(Bundler)
 
 module MazeCraze
+  VERSION = '1.0'
   
-  Game.configure do |config|
-    config.jme_version = "2012-10-19"
-  end
-  
-  class Game
-    attr_accessor :jme_version
+  class << self
+    attr_accessor :jme_version, :logger
     
-    def self.configure
+    def configure
       yield self
     end
   
-    def self.run
+    def run
+      require 'config/imports'
       Maze.new.start
     end
   end

@@ -1,7 +1,9 @@
 #!/usr/bin/ruby
 # -*- coding: utf-8 -*-
-GAME_CONFIG_DIR = File.join(File.dirname(__FILE__), '..', 'config')
-require File.join(GAME_CONFIG_DIR, 'boot')
-require File.join(GAME_CONFIG_DIR, 'game')
+GAME_ROOT_PATH = File.expand_path('../maze_craze')
 
-Game.run
+require File.join(GAME_ROOT_PATH, 'config', 'boot')
+require File.join(GAME_ROOT_PATH, 'config', 'game')
+require File.join(GAME_ROOT_PATH, 'config', 'initializer')
+
+MazeCraze.run
