@@ -1,18 +1,27 @@
 = MazeCraze
-dynamic maze game built with jMonkeyEngine and JRuby
+dynamic maze game built with [jMonkeyEngine](http://jmonkeyengine.org) and [JRuby](http://jruby.org)
 
 == Installation & Requirements
 Currently only tested on Mac OSX 10.6+
 * Open up your terminal on OSX
 * Install JRuby (1.7+)
+
   rvm install jruby-head
+  
 * Download MazeCraze
+
   git clone git://github.com/jwoertink/maze_craze.git
+  
 * cd into the directory
+
   cd maze_craze
+  
 * Install bundler
+
   gem install bundler
+  
 * Bundle the gems
+
   bundle
 
 You should be good at this point.
