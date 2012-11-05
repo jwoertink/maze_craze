@@ -1,8 +1,5 @@
-class Maze < SimpleApplication
-  include ActionListener
-  
-  field_accessor :flyCam, :paused
-  field_reader :cam, :settings
+class Maze < Game::Base
+
   attr_accessor :playtime, :playing, :bullet_app_state, :player, :mark, :shootables, :gun_sound, :ambient_noise
   
   def initialize
@@ -12,23 +9,15 @@ class Maze < SimpleApplication
     @floor = {:width => 200, :height => 100}
     @wall = {:width => 10, :height => 20}
     self.playing = false
-    config = AppSettings.new(true)
-    config.settings_dialog_image = File.join("assets", "images", "maze_craze_logo.png")
-    config.set_resolution(1024, 768)
-    #config.fullscreen = true
-    config.title = "Maze Craze"
-    self.settings = config
-    self.show_settings = false
     @time_text = nil
     @counter = 0
     @targets = []
     @targets_generated = 0
     @game_state = 1
-    Logger.get_logger("").level = Level::WARNING
   end
   
   def simpleInitApp
-    self.timer = NanoTimer.new
+    super
     #display_start_screen
     setupgame
   end
@@ -42,32 +31,13 @@ class Maze < SimpleApplication
     flyCam.enabled = false
     flyCam.drag_to_rotate = true
     input_manager.cursor_visible = true
-    
-    # device = GraphicsEnvironment.local_graphics_environment.default_screen_device
-    # modes = device.display_modes
-    # modes.each do |mode|
-    #   puts "#{mode.width}x#{mode.height} #{mode.bit_depth}bit"
-    # end
-    # self.stop
   end
   
   def setupgame
     self.bullet_app_state = BulletAppState.new
     state_manager.attach(bullet_app_state)
   
-    capsule_shape = CapsuleCollisionShape.new(1.5, 15.0, 1)
-    self.player = CharacterControl.new(capsule_shape, 0.05)
-    player.jump_speed = 20
-    player.fall_speed = 30
-    player.gravity = 30
-    player.physics_location = Vector3f.new(-185, 15, -95)
-    # This isn't being used yet.
-    player_model = asset_manager.load_model(File.join("Models", "Oto", "Oto.mesh.xml"))
-    player_model.local_scale = 0.5
-    player_model.local_translation = Vector3f.new(-185, 15, -95)
-    player_model.add_control(player)
-    bullet_app_state.physics_space.add(player_model)
-  
+    self.player = Player.new(bullet_app_state)
   
     sphere = Sphere.new(30, 30, 0.2)
     self.mark = Geometry.new("BOOM!", sphere)
@@ -123,17 +93,19 @@ MAZE
         us_move_down = us_start + (row * 20)
         case type
         when "_"
-          create_wall(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0)
+          wall = Wall.new(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0)
         when "|"
-          create_wall(move_right, @wall[:height], pipe_move_down, @wall[:width], @wall[:height], 10)
+          wall = Wall.new(move_right, @wall[:height], pipe_move_down, @wall[:width], @wall[:height], 10)
         when " "
           # This is a space
           # Randomly generate a target
           if row > 0 && col > 11 && rand(100) > 90
-            create_wall(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0, {:image => "target.png", :name => "Target"})
+            wall = Wall.new(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0, {:image => "target.png", :name => "Target"})
             @targets_generated += 1
           end
         end
+        
+        root_node.attach_child(wall.object)
       end
     end
     
@@ -168,33 +140,6 @@ MAZE
   def setup_sky!
     root_node.attach_child(SkyFactory.create_sky(asset_manager, File.join("Textures", "Sky", "Bright", "BrightSky.dds"), false))
     #view_port.background_color = ColorRGBA.new(ColorRGBA.random_color)
-  end
-  
-  #  vx = x position
-  #   '_' => -(floor_width - wall_width)
-  #   '|' => -floor_height
-  #  vy = elevation
-  #   vy == by  
-  #  vz = y position
-  #   '_' = -floor_height
-  #   '|' = -(floor_height - wall_width)
-  #  bx = x width
-  #  by = height
-  #  bz = y width
-  def create_wall(vx, vy, vz, bx, by, bz, options = {})
-    image = options[:image] || 'brickwall.jpg'
-    name = options[:name] || "a Wall"
-    box = Box.new(Vector3f.new(vx, vy, vz), bx, by, bz)
-    wall = Geometry.new(name, box)
-    matl = Material.new(asset_manager, File.join("Common", "MatDefs", "Misc", "Unshaded.j3md"))
-    matl.set_texture("ColorMap", asset_manager.load_texture(File.join('assets', 'images', image)))
-    matl.additional_render_state.blend_mode = RenderState::BlendMode::Alpha if image.include?(".png")
-    wall.material = matl
-    scene_shape = CollisionShapeFactory.create_mesh_shape(wall)
-    landscape = RigidBodyControl.new(scene_shape, 0)
-    wall.add_control(landscape)
-    bullet_app_state.physics_space.add(landscape)
-    root_node.attach_child(wall)
   end
   
   def setup_light!
