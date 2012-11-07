@@ -1,3 +1,4 @@
+# This file should contain all of the classes needed to run the game.
 java_import "com.jme3.app.SimpleApplication"
 java_import "com.jme3.system.NanoTimer"
 java_import "com.jme3.asset.TextureKey"

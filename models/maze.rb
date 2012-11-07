@@ -84,8 +84,10 @@ MAZE
     starting_left = -(@floor[:width] - @wall[:width])
     us_start = -@floor[:height]
     pipe_start = us_start - @wall[:width]
-    create_wall(starting_left, 10, pipe_start + 20, 0, 10, 10, {:image => "start.jpg"}) #Start wall
-    create_wall(@floor[:width] + 10, 0, @floor[:height] - 10, 10, 0, 10, {:image => "stop.jpg"}) #End wall
+    start_wall = Wall.new(starting_left, 10, pipe_start + 20, 0, 10, 10, {:image => "start.jpg", :bullet_app_state => bullet_app_state})
+    end_wall = Wall.new(@floor[:width] + 10, 0, @floor[:height] - 10, 10, 0, 10, {:image => "stop.jpg", :bullet_app_state => bullet_app_state})
+    root_node.attach_child(start_wall.object)
+    root_node.attach_child(end_wall.object)
     rows.each_with_index do |step, row|
       step.split(//).each_with_index do |type, col|
         move_right = starting_left + (col * 20) # May need that 20 to be dynamic....
@@ -93,19 +95,19 @@ MAZE
         us_move_down = us_start + (row * 20)
         case type
         when "_"
-          wall = Wall.new(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0)
+          wall = Wall.new(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0, {:bullet_app_state => bullet_app_state})
         when "|"
-          wall = Wall.new(move_right, @wall[:height], pipe_move_down, @wall[:width], @wall[:height], 10)
+          wall = Wall.new(move_right, @wall[:height], pipe_move_down, @wall[:width], @wall[:height], 10, {:bullet_app_state => bullet_app_state})
         when " "
           # This is a space
           # Randomly generate a target
           if row > 0 && col > 11 && rand(100) > 90
-            wall = Wall.new(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0, {:image => "target.png", :name => "Target"})
+            wall = Wall.new(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0, {:image => "target.png", :name => "Target", :bullet_app_state => bullet_app_state})
             @targets_generated += 1
           end
         end
         
-        root_node.attach_child(wall.object)
+        root_node.attach_child(wall.object) unless wall.nil?
       end
     end
     

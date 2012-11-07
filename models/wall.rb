@@ -24,7 +24,7 @@ class Wall
     scene_shape = CollisionShapeFactory.create_mesh_shape(object)
     landscape = RigidBodyControl.new(scene_shape, 0)
     object.add_control(landscape)
-    bullet_app_state.physics_space.add(landscape)
+    opts[:bullet_app_state].physics_space.add(landscape)
     object
   end
   

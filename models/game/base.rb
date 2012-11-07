@@ -12,7 +12,6 @@ module Game
     end
     
     def simpleInitApp
-      super
       self.timer = NanoTimer.new
       $root_node = root_node
       $state_manager = state_manager
