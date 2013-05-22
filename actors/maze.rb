@@ -1,11 +1,9 @@
-class Maze < Game::Base
+class Maze < Game::Window
 
   attr_accessor :playtime, :playing, :bullet_app_state, :player, :mark, :shootables, :gun_sound, :ambient_noise
   
   def initialize
     super
-    [:up, :down, :left, :right].each { |direction| self.instance_variable_set("@#{direction}", false) }
-    @walk_direction = Vector3f.new
     @floor = {:width => 200, :height => 100}
     @wall = {:width => 10, :height => 20}
     self.playing = false
@@ -125,7 +123,7 @@ MAZE
     floor = Box.new(Vector3f::ZERO, @floor[:width], 0.2, @floor[:height])
     floor.scale_texture_coordinates(Vector2f.new(3, 6))
     floor_mat = Material.new(asset_manager, File.join("Common", "MatDefs", "Misc", "Unshaded.j3md"))
-    key = TextureKey.new(File.join('assets', 'images', 'hardwood.jpg'))
+    key = TextureKey.new(Game.asset_path('rock.jpg'))
     key.generate_mips = true
     texture = asset_manager.load_texture(key)
     texture.wrap = Texture::WrapMode::Repeat
@@ -157,10 +155,10 @@ MAZE
   def setup_keys!
     input_manager.add_mapping("Left",  KeyTrigger.new(KeyInput::KEY_A))
     input_manager.add_mapping("Right", KeyTrigger.new(KeyInput::KEY_D))
-    input_manager.add_mapping("Up",    KeyTrigger.new(KeyInput::KEY_W))
-    input_manager.add_mapping("Down",  KeyTrigger.new(KeyInput::KEY_S))
+    input_manager.add_mapping("Forward",    KeyTrigger.new(KeyInput::KEY_W))
+    input_manager.add_mapping("Backward",  KeyTrigger.new(KeyInput::KEY_S))
     input_manager.add_mapping("Shoot", KeyTrigger.new(KeyInput::KEY_SPACE))
-    input_manager.add_listener(ControllerAction.new(self), ["Left", "Right", "Up", "Down", "Shoot"].to_java(:string))
+    input_manager.add_listener(ControllerAction.new(self), ["Left", "Right", "Forward", "Backward", "Shoot"].to_java(:string))
   end
   
   def setup_text!
@@ -200,13 +198,13 @@ MAZE
       #@time_text.text = "PLAY TIME: #{(@counter += 1) / 1000}" if playing?
       cam_dir = cam.direction.clone.mult_local(0.6)
       cam_left = cam.left.clone.mult_local(0.4)
-      @walk_direction.set(0, 0, 0)
-      @walk_direction.add_local(cam_left) if @left
-      @walk_direction.add_local(cam_left.negate) if @right
-      @walk_direction.add_local(cam_dir) if @up
-      @walk_direction.add_local(cam_dir.negate) if @down
-      player.walk_direction = @walk_direction
-      cam.location = player.physics_location
+      player.direction.set(0, 0, 0)
+      player.direction.add_local(cam_left) if player.left?
+      player.direction.add_local(cam_left.negate) if player.right?
+      player.direction.add_local(cam_dir) if player.forward?
+      player.direction.add_local(cam_dir.negate) if player.backward?
+      player.move_direction = player.direction # this is weird... do not like
+      cam.location = player.location
       if cam.location.x > (@floor[:width]) && cam.location.z > (@floor[:height] - 20) && playing?
         if @targets.empty? && @targets_generated > 0
           @time_text.text = "YOU MUST SHOOT A TARGET FIRST!"
@@ -239,7 +237,7 @@ MAZE
     end
     
     def on_action(binding, value, tpf)
-      @parent.instance_variable_set("@#{binding.downcase}", value)
+      @parent.player.send("#{binding.downcase}=", value) if @parent.player.respond_to?("#{binding.downcase}=")
       if binding.eql?("Shoot") && !value
         @parent.gun_sound.play_instance
         results = CollisionResults.new
