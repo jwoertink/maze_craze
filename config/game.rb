@@ -26,6 +26,10 @@ module Game
       end
       File.join(GAME_ROOT_PATH, "assets", type, filename)
     end
+    
+    def scene_path(filename)
+      File.join(GAME_ROOT_PATH, "scenes", filename)
+    end
   
     def run
       require 'config/imports'

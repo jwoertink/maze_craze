@@ -5,7 +5,6 @@ class Player < PhysicalObject
   
   def initialize(app_state)
     super
-    # This isn't being used yet.
     @model = $asset_manager.load_model(File.join("Models", "Oto", "Oto.mesh.xml"))
     @model.local_scale = 0.5
     @model.local_translation = Vector3f.new(-185, 15, -95)

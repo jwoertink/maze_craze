@@ -24,7 +24,7 @@ class Maze < Game::Window
     nifty_display = NiftyJmeDisplay.new(asset_manager, input_manager, audio_renderer, gui_view_port)
     nifty = nifty_display.nifty
     controller = StartScreenController.new(self)
-    nifty.from_xml(File.join('lib', 'maze_craze', 'views', 'screen.xml'), 'start', controller)
+    nifty.from_xml(Game.scene_path('screen.xml'), 'start', controller)
     gui_view_port.add_processor(nifty_display)
     flyCam.enabled = false
     flyCam.drag_to_rotate = true
@@ -51,7 +51,7 @@ class Maze < Game::Window
     setup_light!
     setup_audio!
   
-    generate_maze #(static_maze)
+    generate_maze #(maze: static_maze)
 
     self.playing = true
     self.playtime = Time.now
@@ -194,34 +194,27 @@ MAZE
   end
   
   def simpleUpdate(tpf)
-    unless @game_state.zero?
-      #@time_text.text = "PLAY TIME: #{(@counter += 1) / 1000}" if playing?
-      cam_dir = cam.direction.clone.mult_local(0.6)
-      cam_left = cam.left.clone.mult_local(0.4)
-      player.direction.set(0, 0, 0)
-      player.direction.add_local(cam_left) if player.left?
-      player.direction.add_local(cam_left.negate) if player.right?
-      player.direction.add_local(cam_dir) if player.forward?
-      player.direction.add_local(cam_dir.negate) if player.backward?
-      player.move_direction = player.direction # this is weird... do not like
-      cam.location = player.location
-      if cam.location.x > (@floor[:width]) && cam.location.z > (@floor[:height] - 20) && playing?
-        if @targets.empty? && @targets_generated > 0
-          @time_text.text = "YOU MUST SHOOT A TARGET FIRST!"
-        else
-          puts "finish"
-          self.playing = false
-          finish_time = Time.now - playtime
-          # finish_time != (@counter / 1000)
-          # @targets.size == actual targets shot * 2 ....
-          @time_text.text = "FINISH TIME: #{finish_time.ceil} seconds. You shot #{@targets.size}/#{@targets_generated} targets"
-          self.paused = true
-          input_manager.cursor_visible = true
-          flyCam.enabled = false
-          # use nifty
-        end
-      
-      end
+    cam_dir = cam.direction.clone.mult_local(0.6)
+    cam_left = cam.left.clone.mult_local(0.4)
+    player.direction.set(0, 0, 0)
+    player.direction.add_local(cam_left) if player.left?
+    player.direction.add_local(cam_left.negate) if player.right?
+    player.direction.add_local(cam_dir) if player.forward?
+    player.direction.add_local(cam_dir.negate) if player.backward?
+    player.move_direction = player.direction # this is weird... do not like
+    cam.location = player.location
+    if cam.location.x > (@floor[:width]) && cam.location.z > (@floor[:height] - 20) && playing?
+      if @targets.empty? && @targets_generated > 0
+        @time_text.text = "YOU MUST SHOOT A TARGET FIRST!"
+      else
+        self.playing = false
+        finish_time = Time.now - playtime
+        @time_text.text = "FINISH TIME: #{finish_time.ceil} seconds. You shot #{@targets.size}/#{@targets_generated} targets"
+        self.paused = true
+        input_manager.cursor_visible = true
+        flyCam.enabled = false
+        # use nifty
+      end  
     end
   end
   
