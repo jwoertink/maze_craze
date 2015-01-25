@@ -1,8 +1,8 @@
-source :rubygems
+source "https://rubygems.org"
 
 gem 'theseus', :github => "jwoertink/theseus"
 
-group :development do
-  gem "rawr"
-  gem "rspec"
-end
+# group :development do
+#   gem "rawr"
+#   gem "rspec"
+# end
