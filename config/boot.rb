@@ -6,7 +6,7 @@ require 'bundler'
 ENV['BUNDLE_GEMFILE'] = File.join(GAME_ROOT_PATH, 'Gemfile')
 
 require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
-Bundler.require if defined?(Bundler)
+Bundler.require(:default, :development) if defined?(Bundler)
 
 $CLASSPATH << File.join(GAME_ROOT_PATH, "java", "classes")
 $: << File.join(GAME_ROOT_PATH)

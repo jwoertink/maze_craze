@@ -1,7 +1,7 @@
 class Maze < Game::Window
 
   attr_accessor :playtime, :playing, :bullet_app_state, :player, :mark, :shootables, :gun_sound, :ambient_noise
-  
+
   def initialize
     super
     @floor = {:width => 200, :height => 100}
@@ -13,13 +13,13 @@ class Maze < Game::Window
     @targets_generated = 0
     @game_state = 1
   end
-  
+
   def simpleInitApp
     super
     #display_start_screen
     setupgame
   end
-  
+
   def display_start_screen
     nifty_display = NiftyJmeDisplay.new(asset_manager, input_manager, audio_renderer, gui_view_port)
     nifty = nifty_display.nifty
@@ -30,19 +30,19 @@ class Maze < Game::Window
     flyCam.drag_to_rotate = true
     input_manager.cursor_visible = true
   end
-  
+
   def setupgame
     self.bullet_app_state = BulletAppState.new
     state_manager.attach(bullet_app_state)
-  
+
     self.player = Player.new(bullet_app_state)
-  
+
     sphere = Sphere.new(30, 30, 0.2)
     self.mark = Geometry.new("BOOM!", sphere)
     mark_mat = Material.new(asset_manager, File.join("Common", "MatDefs", "Misc", "Unshaded.j3md"))
     mark_mat.set_color("Color", ColorRGBA::Red)
     mark.material = mark_mat
-  
+
     setup_text!
     setup_camera!
     setup_floor!
@@ -50,16 +50,16 @@ class Maze < Game::Window
     setup_keys!
     setup_light!
     setup_audio!
-  
+
     generate_maze #(maze: static_maze)
 
     self.playing = true
     self.playtime = Time.now
     #flyCam.enabled = true
   end
-  
+
   def static_maze
-    maze = 
+    maze =
 <<-MAZE
 _____________________
   |  _____   _____  |
@@ -74,7 +74,7 @@ _____________________
 |_____|___________|__
 MAZE
   end
-  
+
   def generate_maze(opts = {})
     maze_width = opts[:width] || 10
     maze = opts[:maze] || Theseus::OrthogonalMaze.generate(:width => maze_width)
@@ -104,21 +104,21 @@ MAZE
             @targets_generated += 1
           end
         end
-        
+
         root_node.attach_child(wall.object) unless wall.nil?
       end
     end
-    
+
     #puts "\n\n#{maze}\n\n"
   end
-  
-  
+
+
   def setup_camera!
     flyCam.enabled = true
     flyCam.move_speed = 100
     cam.look_at_direction(Vector3f.new(10, 0, 0).normalize_local, Vector3f::UNIT_Y)
   end
-  
+
   def setup_floor!
     floor = Box.new(Vector3f::ZERO, @floor[:width], 0.2, @floor[:height])
     floor.scale_texture_coordinates(Vector2f.new(3, 6))
@@ -136,12 +136,12 @@ MAZE
     floor_geo.add_control(floor_phy)
     bullet_app_state.physics_space.add(floor_phy)
   end
-  
+
   def setup_sky!
     root_node.attach_child(SkyFactory.create_sky(asset_manager, File.join("Textures", "Sky", "Bright", "BrightSky.dds"), false))
     #view_port.background_color = ColorRGBA.new(ColorRGBA.random_color)
   end
-  
+
   def setup_light!
     al = AmbientLight.new
     al.color = ColorRGBA::White.mult(1.3)
@@ -151,7 +151,7 @@ MAZE
     dl.direction = Vector3f.new(2.8, -2.8, -2.8).normalize_local
     root_node.add_light(dl)
   end
-  
+
   def setup_keys!
     input_manager.add_mapping("Left",  KeyTrigger.new(KeyInput::KEY_A))
     input_manager.add_mapping("Right", KeyTrigger.new(KeyInput::KEY_D))
@@ -160,7 +160,7 @@ MAZE
     input_manager.add_mapping("Shoot", KeyTrigger.new(KeyInput::KEY_SPACE))
     input_manager.add_listener(ControllerAction.new(self), ["Left", "Right", "Forward", "Backward", "Shoot"].to_java(:string))
   end
-  
+
   def setup_text!
     gui_node.detach_all_children
     gui_font = asset_manager.load_font(File.join("Interface", "Fonts", "Default.fnt"))
@@ -169,7 +169,7 @@ MAZE
     ch.text = "+"
     ch.set_local_translation(settings.width / 2 - gui_font.char_set.rendered_size / 3 * 2, settings.height / 2 + ch.line_height / 2, 0)
     gui_node.attach_child(ch)
-    
+
     @time_text = BitmapText.new(gui_font, false)
     @time_text.size = 20
     @time_text.color = ColorRGBA::Blue
@@ -177,22 +177,23 @@ MAZE
     @time_text.set_local_translation(50, 50, 0)
     gui_node.attach_child(@time_text)
   end
-  
+
   def setup_audio!
     self.gun_sound = AudioNode.new(asset_manager, File.join("Sound", "Effects", "Gun.wav"), false)
     gun_sound.looping = false
     gun_sound.volume = 3
     root_node.attach_child(gun_sound)
-    
-    self.ambient_noise = AudioNode.new(asset_manager, File.join("assets", "sound", "lost.ogg"), false)
-    ambient_noise.looping = true
-    ambient_noise.positional = true
-    ambient_noise.local_translation = Vector3f::ZERO.clone
-    ambient_noise.volume = 2
-    root_node.attach_child(ambient_noise)
-    ambient_noise.play
+
+    # only mono audio is supported for positional audio nodes
+    # self.ambient_noise = AudioNode.new(asset_manager, File.join("assets", "sound", "lost.ogg"), false)
+    # ambient_noise.looping = true
+    # ambient_noise.positional = true
+    # ambient_noise.local_translation = Vector3f::ZERO.clone
+    # ambient_noise.volume = 2
+    # root_node.attach_child(ambient_noise)
+    # ambient_noise.play
   end
-  
+
   def simpleUpdate(tpf)
     cam_dir = cam.direction.clone.mult_local(0.6)
     cam_left = cam.left.clone.mult_local(0.4)
@@ -214,21 +215,21 @@ MAZE
         input_manager.cursor_visible = true
         flyCam.enabled = false
         # use nifty
-      end  
+      end
     end
   end
-  
+
   def playing?
     playing
   end
-  
+
   class ControllerAction
     include ActionListener
-    
+
     def initialize(obj)
       @parent = obj
     end
-    
+
     def on_action(binding, value, tpf)
       @parent.player.send("#{binding.downcase}=", value) if @parent.player.respond_to?("#{binding.downcase}=")
       if binding.eql?("Shoot") && !value
@@ -258,6 +259,6 @@ MAZE
         end
       end
     end
-    
+
   end
 end
