@@ -21,7 +21,7 @@ class Maze < Game::Window
   end
 
   def display_start_screen
-    nifty_display = NiftyJmeDisplay.new(asset_manager, input_manager, audio_renderer, gui_view_port)
+    nifty_display = NiftyJmeDisplay.new($asset_manager, $input_manager, $audio_renderer, $gui_view_port)
     nifty = nifty_display.nifty
     controller = StartScreenController.new(self)
     nifty.from_xml(Game.scene_path('screen.xml'), 'start', controller)
@@ -123,9 +123,9 @@ MAZE
     floor = Box.new(Vector3f::ZERO, @floor[:width], 0.2, @floor[:height])
     floor.scale_texture_coordinates(Vector2f.new(3, 6))
     floor_mat = Material.new(asset_manager, File.join("Common", "MatDefs", "Misc", "Unshaded.j3md"))
-    key = TextureKey.new(Game.asset_path('rock.jpg'))
+    key = TextureKey.new('assets/images/rock.jpg')
     key.generate_mips = true
-    texture = asset_manager.load_texture(key)
+    texture = $asset_manager.load_texture(key)
     texture.wrap = Texture::WrapMode::Repeat
     floor_mat.set_texture("ColorMap", texture)
     floor_geo = Geometry.new("Floor", floor)
@@ -138,8 +138,8 @@ MAZE
   end
 
   def setup_sky!
-    root_node.attach_child(SkyFactory.create_sky(asset_manager, File.join("Textures", "Sky", "Bright", "BrightSky.dds"), false))
-    #view_port.background_color = ColorRGBA.new(ColorRGBA.random_color)
+    # root_node.attach_child(SkyFactory.create_sky(asset_manager, File.join("Textures", "Sky", "Bright", "BrightSky.dds"), false))
+    view_port.background_color = ColorRGBA.new(ColorRGBA.random_color)
   end
 
   def setup_light!
@@ -179,10 +179,10 @@ MAZE
   end
 
   def setup_audio!
-    self.gun_sound = AudioNode.new(asset_manager, File.join("Sound", "Effects", "Gun.wav"), false)
-    gun_sound.looping = false
-    gun_sound.volume = 3
-    root_node.attach_child(gun_sound)
+    # self.gun_sound = AudioNode.new($asset_manager, File.join("Sound", "Effects", "Gun.wav"), false)
+    # gun_sound.looping = false
+    # gun_sound.volume = 3
+    # root_node.attach_child(gun_sound)
 
     # only mono audio is supported for positional audio nodes
     # self.ambient_noise = AudioNode.new(asset_manager, File.join("assets", "sound", "lost.ogg"), false)
@@ -233,7 +233,7 @@ MAZE
     def on_action(binding, value, tpf)
       @parent.player.send("#{binding.downcase}=", value) if @parent.player.respond_to?("#{binding.downcase}=")
       if binding.eql?("Shoot") && !value
-        @parent.gun_sound.play_instance
+        # @parent.gun_sound.play_instance
         results = CollisionResults.new
         ray = Ray.new(@parent.cam.location, @parent.cam.direction)
         @parent.root_node.collide_with(ray, results)

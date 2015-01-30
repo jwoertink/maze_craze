@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'jmonkeyengine'
+gem 'jmonkeyengine', github: 'jwoertink/jmonkeyengine-ruby'
 gem 'theseus', github: 'jwoertink/theseus'
 
 group :development do
