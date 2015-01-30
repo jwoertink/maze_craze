@@ -11,4 +11,4 @@ Bundler.require(:default, :development) if defined?(Bundler)
 $CLASSPATH << File.join(GAME_ROOT_PATH, "java", "classes")
 $: << File.join(GAME_ROOT_PATH)
 
-require 'vendor/jme3.jar'
+require 'jmonkeyengine'
