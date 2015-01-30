@@ -2,7 +2,7 @@
 dynamic maze game built with [jMonkeyEngine](http://jmonkeyengine.org) and [JRuby](http://jruby.org)
 
 ## Installation & Requirements
-Currently only tested on Mac OSX 10.6+
+Currently only tested on Mac OSX 10.9+
 * Open up your terminal on OSX
 * Install JRuby (1.7+)
 
@@ -50,4 +50,4 @@ The object of the game is to find your way through the maze. There are some targ
 * jme jar is pulled from [stable engine build](http://updates.jmonkeyengine.org/stable/3.0/engine/)
 
 ## Copyright
-Copyright (c) 2012 Jeremy Woertink. You can download the game, and change the source code all you want. If you sell it, and make money, you have to give me credit :)
+Copyright (c) 2014 Jeremy Woertink. You can download the game, and change the source code all you want. If you sell it, and make money, you have to give me credit :)
