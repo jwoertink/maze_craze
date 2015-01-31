@@ -1,11 +1,11 @@
 class Wall
   attr_accessor :object
-  
+
   #  vx = x position
   #   '_' => -(floor_width - wall_width)
   #   '|' => -floor_height
   #  vy = elevation
-  #   vy == by  
+  #   vy == by
   #  vz = y position
   #   '_' = -floor_height
   #   '|' = -(floor_height - wall_width)
@@ -17,7 +17,7 @@ class Wall
     name = opts[:name] || "a Wall"
     box = Box.new(Vector3f.new(x_pos, elevation, y_pos), x_width, height, y_width)
     self.object = Geometry.new(name, box)
-    matl = Material.new($asset_manager, File.join("Common", "MatDefs", "Misc", "Unshaded.j3md"))
+    matl = Material.new($asset_manager, "Common/MatDefs/Misc/Unshaded.j3md")
     matl.set_texture("ColorMap", $asset_manager.load_texture(File.join('assets', 'images', image)))
     matl.additional_render_state.blend_mode = RenderState::BlendMode::Alpha if image.include?(".png")
     object.material = matl
@@ -27,5 +27,5 @@ class Wall
     opts[:bullet_app_state].physics_space.add(landscape)
     object
   end
-  
+
 end

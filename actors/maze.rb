@@ -39,7 +39,7 @@ class Maze < Game::Window
 
     sphere = Sphere.new(30, 30, 0.2)
     self.mark = Geometry.new("BOOM!", sphere)
-    mark_mat = Material.new(asset_manager, File.join("Common", "MatDefs", "Misc", "Unshaded.j3md"))
+    mark_mat = Material.new(asset_manager, "Common/MatDefs/Misc/Unshaded.j3md")
     mark_mat.set_color("Color", ColorRGBA::Red)
     mark.material = mark_mat
 
@@ -122,7 +122,7 @@ MAZE
   def setup_floor!
     floor = Box.new(Vector3f::ZERO, @floor[:width], 0.2, @floor[:height])
     floor.scale_texture_coordinates(Vector2f.new(3, 6))
-    floor_mat = Material.new(asset_manager, File.join("Common", "MatDefs", "Misc", "Unshaded.j3md"))
+    floor_mat = Material.new($asset_manager, "Common/MatDefs/Misc/Unshaded.j3md")
     key = TextureKey.new('assets/images/rock.jpg')
     key.generate_mips = true
     texture = $asset_manager.load_texture(key)
@@ -138,8 +138,8 @@ MAZE
   end
 
   def setup_sky!
-    # root_node.attach_child(SkyFactory.create_sky(asset_manager, File.join("Textures", "Sky", "Bright", "BrightSky.dds"), false))
-    view_port.background_color = ColorRGBA.new(ColorRGBA.random_color)
+    root_node.attach_child(SkyFactory.create_sky($asset_manager, "Textures/Sky/Bright/BrightSky.dds", false))
+    # view_port.background_color = ColorRGBA.new(ColorRGBA.random_color)
   end
 
   def setup_light!
