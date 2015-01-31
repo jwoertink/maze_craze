@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'jmonkeyengine-testdata', github: 'jwoertink/jmonkeyengine-ruby-testdata'
 gem 'jmonkeyengine', github: 'jwoertink/jmonkeyengine-ruby'
 gem 'theseus', github: 'jwoertink/theseus'
 
