@@ -41,7 +41,8 @@ java_import "com.jme3.niftygui.NiftyJmeDisplay"
 # java_import "PauseScreenController"
 # java_import "EndScreenController"
 
-require 'models/game/base' # This belongs somewhere else
-require 'models/wall'
-require 'models/player'
-require 'models/maze'
+require 'app/window' # This belongs somewhere else
+require 'app/physical_object'
+require 'actors/wall'
+require 'actors/player'
+require 'actors/maze'
