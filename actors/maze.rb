@@ -99,7 +99,7 @@ MAZE
         when " "
           # This is a space
           # Randomly generate a target
-          if row > 0 && col > 11 && rand(100) > 90
+          if rand(100) > 90
             wall = Wall.new(move_right, @wall[:height], us_move_down, @wall[:width], @wall[:height], 0, {:image => "target.png", :name => "Target", :bullet_app_state => bullet_app_state})
             @targets_generated += 1
           end
@@ -116,6 +116,7 @@ MAZE
   def setup_camera!
     flyCam.enabled = true
     flyCam.move_speed = 100
+    flyCam.zoom_speed = 0
     cam.look_at_direction(Vector3f.new(10, 0, 0).normalize_local, Vector3f::UNIT_Y)
   end
 
@@ -163,7 +164,7 @@ MAZE
 
   def setup_text!
     gui_node.detach_all_children
-    gui_font = asset_manager.load_font(File.join("Interface", "Fonts", "Default.fnt"))
+    gui_font = asset_manager.load_font("Interface/Fonts/Default.fnt")
     ch = BitmapText.new(gui_font, false)
     ch.size = gui_font.char_set.rendered_size * 2
     ch.text = "+"
@@ -178,20 +179,21 @@ MAZE
     gui_node.attach_child(@time_text)
   end
 
+  # only mono audio is supported for positional audio nodes
   def setup_audio!
-    # self.gun_sound = AudioNode.new($asset_manager, File.join("Sound", "Effects", "Gun.wav"), false)
-    # gun_sound.looping = false
-    # gun_sound.volume = 3
-    # root_node.attach_child(gun_sound)
+    self.gun_sound = AudioNode.new($asset_manager, "Sound/Effects/Gun.wav", false)
+    gun_sound.positional = false
+    gun_sound.looping = false
+    gun_sound.volume = 3
+    root_node.attach_child(gun_sound)
 
-    # only mono audio is supported for positional audio nodes
-    # self.ambient_noise = AudioNode.new(asset_manager, File.join("assets", "sound", "lost.ogg"), false)
-    # ambient_noise.looping = true
-    # ambient_noise.positional = true
-    # ambient_noise.local_translation = Vector3f::ZERO.clone
-    # ambient_noise.volume = 2
-    # root_node.attach_child(ambient_noise)
-    # ambient_noise.play
+    self.ambient_noise = AudioNode.new(asset_manager, "assets/sound/lost.ogg", false)
+    ambient_noise.looping = true
+    ambient_noise.positional = true
+    ambient_noise.local_translation = Vector3f::ZERO.clone
+    ambient_noise.volume = 2
+    root_node.attach_child(ambient_noise)
+    ambient_noise.play
   end
 
   def simpleUpdate(tpf)
@@ -233,7 +235,7 @@ MAZE
     def on_action(binding, value, tpf)
       @parent.player.send("#{binding.downcase}=", value) if @parent.player.respond_to?("#{binding.downcase}=")
       if binding.eql?("Shoot") && !value
-        # @parent.gun_sound.play_instance
+        @parent.gun_sound.play_instance
         results = CollisionResults.new
         ray = Ray.new(@parent.cam.location, @parent.cam.direction)
         @parent.root_node.collide_with(ray, results)
