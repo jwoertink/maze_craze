@@ -174,7 +174,7 @@ MAZE
     @target_text = BitmapText.new(gui_font, false)
     @target_text.size = 20
     @target_text.color = ColorRGBA::Red
-    @target_text.text = "TARGETS: #{@targets.count} / #{@targets_generated.count}"
+    @target_text.text = "TARGETS: #{@targets.count} / #{@targets_generated}"
     @target_text.set_local_translation(50, 700, 10)
     gui_node.attach_child(@target_text)
   end
@@ -231,7 +231,7 @@ MAZE
       @targets << spacial
       root_node.detach_child(mark)
       spacial.remove_from_parent
-      @target_text.text = "TARGETS: #{@targets.count} / #{@targets_generated.count}"
+      @target_text.text = "TARGETS: #{@targets.count} / #{@targets_generated}"
       bullet_app_state.physics_space.remove(spacial.get_control(RigidBodyControl.java_class))
     end
   end
