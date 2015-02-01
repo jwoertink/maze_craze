@@ -171,12 +171,12 @@ MAZE
     ch.set_local_translation(settings.width / 2 - gui_font.char_set.rendered_size / 3 * 2, settings.height / 2 + ch.line_height / 2, 0)
     gui_node.attach_child(ch)
 
-    @time_text = BitmapText.new(gui_font, false)
-    @time_text.size = 20
-    @time_text.color = ColorRGBA::Blue
-    @time_text.text = "PLAY TIME:"
-    @time_text.set_local_translation(50, 50, 0)
-    gui_node.attach_child(@time_text)
+    @target_text = BitmapText.new(gui_font, false)
+    @target_text.size = 20
+    @target_text.color = ColorRGBA::Red
+    @target_text.text = "TARGETS: #{@targets.count} / #{@targets_generated.count}"
+    @target_text.set_local_translation(50, 700, 10)
+    gui_node.attach_child(@target_text)
   end
 
   # only mono audio is supported for positional audio nodes
@@ -207,12 +207,13 @@ MAZE
     player.move_direction = player.direction # this is weird... do not like
     cam.location = player.location
     if cam.location.x > (@floor[:width]) && cam.location.z > (@floor[:height] - 20) && playing?
+      # Found the end
       if @targets.empty? && @targets_generated > 0
-        @time_text.text = "YOU MUST SHOOT A TARGET FIRST!"
+        @target_text.text = "YOU MUST SHOOT A TARGET FIRST!"
       else
         self.playing = false
         finish_time = Time.now - playtime
-        @time_text.text = "FINISH TIME: #{finish_time.ceil} seconds. You shot #{@targets.size}/#{@targets_generated} targets"
+        # @target_text.text = "FINISH TIME: #{finish_time.ceil} seconds. You shot #{@targets.size}/#{@targets_generated} targets"
         self.paused = true
         input_manager.cursor_visible = true
         flyCam.enabled = false
@@ -223,6 +224,16 @@ MAZE
 
   def playing?
     playing
+  end
+
+  def update_target(spacial)
+    unless @targets.include? spacial
+      @targets << spacial
+      root_node.detach_child(mark)
+      spacial.remove_from_parent
+      @target_text.text = "TARGETS: #{@targets.count} / #{@targets_generated.count}"
+      bullet_app_state.physics_space.remove(spacial.get_control(RigidBodyControl.java_class))
+    end
   end
 
   class ControllerAction
@@ -253,10 +264,7 @@ MAZE
           spacial = collision.geometry
           hit = spacial.name
           if hit.eql?("Target")
-            @parent.instance_variable_get("@targets") << spacial
-            @parent.root_node.detach_child(@parent.mark)
-            spacial.remove_from_parent
-            @parent.bullet_app_state.physics_space.remove(spacial.get_control(RigidBodyControl.java_class))
+            @parent.update_target(spacial)
           end
         end
       end
