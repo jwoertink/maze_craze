@@ -1,6 +1,0 @@
-#!/usr/bin/ruby
-# -*- coding: utf-8 -*-
-
-require_relative '../config/load'
-
-Game.run

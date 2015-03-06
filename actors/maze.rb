@@ -16,7 +16,7 @@ class Maze < Game::Window
 
   def simpleInitApp
     super
-    #display_start_screen
+    # display_start_screen
     setupgame
   end
 

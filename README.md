@@ -6,29 +6,29 @@ Currently only tested on Mac OSX 10.9+
 * Open up your terminal on OSX
 * Install JRuby (1.7+)
 
-  ```rvm install jruby-head```
+  `rvm install jruby-head`
 
 * Download MazeCraze
 
-  ```git clone git://github.com/jwoertink/maze_craze.git```
+  `git clone git://github.com/jwoertink/maze_craze.git`
 
 * cd into the directory
 
-  ```cd maze_craze```
+  `cd maze_craze`
 
 * Install bundler
 
-  ```gem install bundler```
+  `gem install bundler`
 
 * Bundle the gems
 
-  ```bundle```
+  `bundle`
 
 You should be good at this point.
 
 ## Running MazeCraze
 Just run this command from the terminal
-  ```jruby bin/maze_craze```
+  `rake build`
 
 ## Game Play
 The object of the game is to find your way through the maze. There are some targets hidden within the maze. You must find them all, and destroy them before completing the maze.
